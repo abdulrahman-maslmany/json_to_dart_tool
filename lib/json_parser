@@ -1,0 +1,33 @@
+// lib/json_parser.dart
+
+class JsonParser {
+  static String generateDartClass(String className, Map<String, dynamic> json) {
+    StringBuffer buffer = StringBuffer();
+    buffer.writeln('class $className {');
+
+    // تعريف المتغيرات
+    json.forEach((key, value) {
+      buffer.writeln('  final ${_mapTypeToDart(value)}? ${key.toLowerCase()};');
+    });
+
+    buffer.writeln('\n  $className({');
+    json.forEach((key, _) => buffer.writeln('    this.${key.toLowerCase()},'));
+    buffer.writeln('  });');
+
+    // دالة fromJson
+    buffer.writeln('\n  factory $className.fromJson(Map<String, dynamic> json) => $className(');
+    json.forEach((key, _) => buffer.writeln('    ${key.toLowerCase()}: json["$key"],'));
+    buffer.writeln('  );');
+
+    buffer.writeln('}');
+    return buffer.toString();
+  }
+
+  static String _mapTypeToDart(dynamic value) {
+    if (value is int) return 'int';
+    if (value is double) return 'double';
+    if (value is String) return 'String';
+    if (value is bool) return 'bool';
+    return 'dynamic';
+  }
+}
