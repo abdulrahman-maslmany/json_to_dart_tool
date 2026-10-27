@@ -1,5 +1,7 @@
 # JSON to Dart Pro 🛠️📱
 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/d76080d5669c4568984ef53bd8dca09b)](https://app.codacy.com?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+
 An advanced, production-ready developer tool built with **Flutter** to instantly convert raw JSON objects into clean, type-safe **Dart model classes** for Flutter applications.
 
 ---
@@ -24,6 +26,6 @@ An advanced, production-ready developer tool built with **Flutter** to instantly
 │   ├── main.dart             # Modern Material 3 UI, state management, and input forms
 │   └── json_parser.dart      # Core tokenization, type inference, and Dart code generation logic
 ├── test/
-│   └── json_parser_test.dart # Automated regression and validation unit test suite
+│   └── widget_test.dart      # Automated regression and validation unit test suite
 ├── .github/workflows/        # Automated continuous integration (CI) pipeline
 └── docker-compose.yml        # Isolated containerized test runner environment
