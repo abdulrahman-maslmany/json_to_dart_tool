@@ -1,30 +1,29 @@
-# JSON to Dart Pro
+# JSON to Dart Pro 🛠️📱
 
-An advanced and professional tool to convert JSON objects into clean, production-ready Dart classes for Flutter.
+An advanced, production-ready developer tool built with **Flutter** to instantly convert raw JSON objects into clean, type-safe **Dart model classes** for Flutter applications.
 
-## Features
+---
 
-- **Nested Object Support**: Automatically generates classes for nested JSON objects.
-- **List Support**: Handles lists of primitives and objects.
-- **Model Methods**: Generates `fromJson` and `toJson` methods for every class.
-- **Syntax Highlighting**: Beautifully formatted output with Dart syntax highlighting.
-- **Modern UI**: Clean Material 3 design with Google Fonts integration.
-- **CamelCase Conversion**: Automatically converts snake_case JSON keys to camelCase Dart fields.
-- **Copy to Clipboard**: Quick access to your generated code.
+## 🌟 Key Features
 
-## How to use
+- **Nested Object Support:** Automatically parses and generates decoupled classes for deeply nested JSON objects.
+- **Robust List Handling:** Handles collections of primitives (`String`, `int`, `double`, `bool`) and arrays of custom objects.
+- **Complete Serialization:** Generates idiomatic `fromJson` factory constructors and `toJson` serialization methods for every class.
+- **Syntax Highlighting:** Integrated code visualization with real-time Dart syntax coloring.
+- **Modern Material 3 UI:** Clean interface styled with Material Design 3 and Google Fonts typography.
+- **CamelCase Sanitization:** Automatically converts snake_case JSON keys into standard Dart camelCase properties.
+- **Clipboard Integration:** One-click copy for fast workflow integration.
+- **Automated Verification:** Cross-platform continuous integration (CI) pipeline covering static analysis and unit testing.
 
-1. Enter your desired **Class Name** (e.g., `UserResponse`).
-2. Paste your **JSON** string into the text area.
-3. Click **Generate**.
-4. Use the **Copy** button to get your Dart code!
+---
 
-## Screenshots
+## 📁 Project Architecture
 
-(Add your screenshots here)
-
-## Dependencies
-
-- `flutter_highlight`: For code visualization.
-- `google_fonts`: For modern typography.
-- `dart:convert`: For JSON parsing.
+```text
+├── lib/
+│   ├── main.dart             # Modern Material 3 UI, state management, and input forms
+│   └── json_parser.dart      # Core tokenization, type inference, and Dart code generation logic
+├── test/
+│   └── json_parser_test.dart # Automated regression and validation unit test suite
+├── .github/workflows/        # Automated continuous integration (CI) pipeline
+└── docker-compose.yml        # Isolated containerized test runner environment
