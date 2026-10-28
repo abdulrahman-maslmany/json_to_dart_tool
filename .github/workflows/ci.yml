@@ -8,7 +8,7 @@ on:
 
 jobs:
   analyze-and-test:
-    name: Flutter Lint & Automated Tests
+    name: Flutter Lint, Format & Automated Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -24,8 +24,11 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      - name: Analyze Static Code Quality
-        run: flutter analyze --no-fatal-infos
+      - name: Verify Code Formatting
+        run: dart format --output=none --set-exit-if-changed . || true
 
-      - name: Run Test Suite
-        run: flutter test
+      - name: Analyze Static Code Quality
+        run: flutter analyze
+
+      - name: Run Automated Test Suite
+        run: flutter test --coverage
