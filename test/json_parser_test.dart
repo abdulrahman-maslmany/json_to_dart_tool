@@ -1,62 +1,62 @@
-import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:json_to_dart_tool/json_parser.dart';
 
-// اختبارات منطق تحليل الـ JSON وتوليد كلاسات Dart
 void main() {
-  group('JSON to Dart Parser Unit Tests', () {
+  group('JsonParser Real Class Integration Suite', () {
 
-    test('Parses flat JSON key-value pairs properly', () {
-      const jsonString = '{"id": 101, "name": "Flutter Developer", "isActive": true}';
-      final Map<String, dynamic> data = jsonDecode(jsonString);
+    test('JsonParser generates valid Dart model class from flat JSON', () {
+      const sampleJson = '{"id": 1, "name": "Flutter", "is_active": true}';
+      
+      // استدعاء دالة الكلاس الفعلية من مشروعك
+      final result = JsonParser.generateDartClass('UserModel', sampleJson);
 
-      expect(data['id'], equals(101));
-      expect(data['name'], equals('Flutter Developer'));
-      expect(data['isActive'], isTrue);
+      expect(result, contains('class UserModel'));
+      expect(result, contains('final int? id;'));
+      expect(result, contains('final String? name;'));
+      expect(result, contains('final bool? isActive;')); // camelCase verification
+      expect(result, contains('factory UserModel.fromJson'));
+      expect(result, contains('Map<String, dynamic> toJson()'));
     });
 
-    test('Handles nested JSON objects structure', () {
-      const jsonString = '''
+    test('JsonParser handles nested JSON objects recursively', () {
+      const nestedJson = '''
       {
-        "user": {
-          "firstName": "John",
-          "address": { "city": "Cairo" }
+        "user_id": 100,
+        "profile": {
+          "bio": "Mobile Engineer",
+          "city": "Cairo"
         }
       }
       ''';
-      final Map<String, dynamic> data = jsonDecode(jsonString);
 
-      expect(data['user'], isNotNull);
-      expect(data['user']['address']['city'], equals('Cairo'));
+      final result = JsonParser.generateDartClass('UserResponse', nestedJson);
+
+      expect(result, contains('class UserResponse'));
+      expect(result, contains('class Profile'));
+      expect(result, contains('final Profile? profile;'));
+      expect(result, contains('Profile.fromJson'));
     });
 
-    test('Parses list of primitives and list of objects correctly', () {
-      const jsonString = '''
+    test('JsonParser handles lists of primitive values and custom objects', () {
+      const listJson = '''
       {
-        "tags": ["dart", "flutter", "mobile"],
-        "scores": [10, 20, 30]
+        "tags": ["dart", "flutter"],
+        "scores": [95, 100]
       }
       ''';
-      final Map<String, dynamic> data = jsonDecode(jsonString);
 
-      expect(data['tags'], isA<List>());
-      expect((data['tags'] as List).length, equals(3));
-      expect((data['scores'] as List).first, equals(10));
+      final result = JsonParser.generateDartClass('TagsResponse', listJson);
+
+      expect(result, contains('final List<String>? tags;'));
+      expect(result, contains('final List<int>? scores;'));
     });
 
-    test('Validates camelCase formatting logic', () {
-      String toCamelCase(String text) {
-        final parts = text.split('_');
-        if (parts.length <= 1) return text;
-        return parts.first + parts.skip(1).map((w) => w[0].toUpperCase() + w.substring(1)).join();
-      }
+    test('JsonParser catches invalid malformed JSON gracefully', () {
+      const invalidJson = '{invalid_json}';
+      final result = JsonParser.generateDartClass('ErrorModel', invalidJson);
 
-      expect(toCamelCase('user_profile_id'), equals('userProfileId'));
-      expect(toCamelCase('first_name'), equals('firstName'));
-    });
-
-    test('Handles empty and invalid JSON gracefully', () {
-      expect(() => jsonDecode(''), throwsA(isA<FormatException>()));
-      expect(() => jsonDecode('{invalid}'), throwsA(isA<FormatException>()));
+      // التأكد من معالجة الخطأ
+      expect(result.toLowerCase(), contains('error'));
     });
   });
 }
