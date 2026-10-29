@@ -29,3 +29,5 @@ An advanced, production-ready developer tool built with **Flutter** to instantly
 │   └── widget_test.dart      # Automated regression and validation unit test suite
 ├── .github/workflows/        # Automated continuous integration (CI) pipeline
 └── docker-compose.yml        # Isolated containerized test runner environment
+## 📱 Project Classification
+This project is an open-source **Client-Side Mobile & Desktop Developer Tool** built exclusively with Flutter and Dart. It contains zero cloud infrastructure or IaC components.
