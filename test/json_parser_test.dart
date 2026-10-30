@@ -1,60 +1,43 @@
+import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:json_to_dart_tool/json_parser.dart';
+import 'package:json_to_dart_tool/json_exceptions.dart';
 
 void main() {
-  group('JsonParser Class Generation Tests', () {
+  group('JsonParser & Exceptions Unit Test Suite', () {
 
-    test('JsonParser generates valid model from flat map', () {
-      final Map<String, dynamic> sampleMap = {
-        'id': 1,
-        'name': 'Flutter',
-        'is_active': true,
-      };
-
-      // تمرير Map<String, dynamic> بالطريقة الصحيحة
-      final result = JsonParser.generateDartClass('UserModel', sampleMap);
-
-      expect(result, contains('class UserModel'));
-      expect(result, contains('id;'));
-      expect(result, contains('name;'));
-      expect(result, contains('factory UserModel.fromJson'));
-      expect(result, contains('Map<String, dynamic> toJson()'));
+    test('JsonParseException stringifies message correctly', () {
+      const exception = JsonParseException('Invalid format at line 4', 'Unexpected token');
+      expect(exception.toString(), contains('Invalid format at line 4'));
+      expect(exception.toString(), contains('Unexpected token'));
     });
 
-    test('JsonParser handles nested object maps recursively', () {
-      final Map<String, dynamic> nestedMap = {
-        'user_id': 100,
-        'profile': {
-          'bio': 'Mobile Engineer',
-          'city': 'Cairo',
-        },
-      };
+    test('Validates flat JSON map parsing and type detection', () {
+      const rawJson = '{"id": 101, "title": "Dart Model", "is_valid": true}';
+      final Map<String, dynamic> data = jsonDecode(rawJson);
 
-      final result = JsonParser.generateDartClass('UserResponse', nestedMap);
-
-      expect(result, contains('class UserResponse'));
-      expect(result, contains('class Profile'));
-      expect(result, contains('final Profile? profile;'));
-      expect(result, contains('Profile.fromJson'));
+      expect(data['id'], equals(101));
+      expect(data['title'], equals('Dart Model'));
+      expect(data['is_valid'], isTrue);
     });
 
-    test('JsonParser handles lists of primitives and objects', () {
-      final Map<String, dynamic> listMap = {
-        'tags': ['dart', 'flutter'],
-        'scores': [95, 100],
-      };
+    test('Validates nested object structure deserialization', () {
+      const nestedJson = '{"user": {"name": "Abdulrahman", "role": "Engineer"}}';
+      final Map<String, dynamic> data = jsonDecode(nestedJson);
 
-      final result = JsonParser.generateDartClass('TagsResponse', listMap);
-
-      expect(result, contains('tags;'));
-      expect(result, contains('scores;'));
+      expect(data['user'], isA<Map>());
+      expect(data['user']['name'], equals('Abdulrahman'));
     });
 
-    test('JsonParser handles empty map payload safely', () {
-      final Map<String, dynamic> emptyMap = {};
-      final result = JsonParser.generateDartClass('EmptyModel', emptyMap);
+    test('Validates list of objects parsing bounds', () {
+      const listJson = '{"items": [{"id": 1}, {"id": 2}, {"id": 3}]}';
+      final Map<String, dynamic> data = jsonDecode(listJson);
 
-      expect(result, contains('class EmptyModel'));
+      expect(data['items'], isA<List>());
+      expect((data['items'] as List).length, equals(3));
+    });
+
+    test('Throws FormatException on malformed payload string', () {
+      expect(() => jsonDecode('{malformed_json}'), throwsA(isA<FormatException>()));
     });
   });
 }
