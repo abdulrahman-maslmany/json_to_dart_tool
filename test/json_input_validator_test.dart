@@ -3,7 +3,6 @@ import 'package:json_to_dart_tool/json_input_validator.dart';
 
 void main() {
   group('JsonInputValidator Unit Tests', () {
-
     test('Validates correct JSON map payload', () {
       const input = '{"status": "ok", "code": 200}';
       final result = JsonInputValidator.validate(input);

@@ -40,7 +40,9 @@ class JsonToolScreen extends StatefulWidget {
 
 class _JsonToolScreenState extends State<JsonToolScreen> {
   final TextEditingController _jsonController = TextEditingController();
-  final TextEditingController _classNameController = TextEditingController(text: "MyModel");
+  final TextEditingController _classNameController = TextEditingController(
+    text: "MyModel",
+  );
   String _generatedCode = "";
 
   void _generate() {
@@ -48,7 +50,7 @@ class _JsonToolScreenState extends State<JsonToolScreen> {
       _showSnackBar("Please paste some JSON first!");
       return;
     }
-    
+
     try {
       final dynamic decoded = jsonDecode(_jsonController.text);
       String className = _classNameController.text.trim();
@@ -59,12 +61,17 @@ class _JsonToolScreenState extends State<JsonToolScreen> {
           _generatedCode = JsonParser.generateDartClass(className, decoded);
         } else if (decoded is List && decoded.isNotEmpty) {
           if (decoded[0] is Map<String, dynamic>) {
-            _generatedCode = JsonParser.generateDartClass(className, decoded[0] as Map<String, dynamic>);
+            _generatedCode = JsonParser.generateDartClass(
+              className,
+              decoded[0] as Map<String, dynamic>,
+            );
           } else {
-            _generatedCode = "// The list contains primitive values, not objects.";
+            _generatedCode =
+                "// The list contains primitive values, not objects.";
           }
         } else {
-          _generatedCode = "// Please provide a valid JSON object or a non-empty list of objects.";
+          _generatedCode =
+              "// Please provide a valid JSON object or a non-empty list of objects.";
         }
       });
     } catch (e) {
@@ -100,12 +107,19 @@ class _JsonToolScreenState extends State<JsonToolScreen> {
           children: [
             Image.asset('assets/images/logo.png', height: 30),
             const SizedBox(width: 10),
-            Text("JSON to Dart Pro", style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
+            Text(
+              "JSON to Dart Pro",
+              style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+            ),
           ],
         ),
         centerTitle: false,
         actions: [
-          IconButton(onPressed: _clear, icon: const Icon(Icons.delete_outline), tooltip: "Clear All"),
+          IconButton(
+            onPressed: _clear,
+            icon: const Icon(Icons.delete_outline),
+            tooltip: "Clear All",
+          ),
         ],
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
@@ -133,7 +147,10 @@ class _JsonToolScreenState extends State<JsonToolScreen> {
                     icon: const Icon(Icons.bolt),
                     label: const Text("Generate"),
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 24),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 18,
+                        horizontal: 24,
+                      ),
                       backgroundColor: Colors.deepPurple,
                       foregroundColor: Colors.white,
                     ),
@@ -156,16 +173,26 @@ class _JsonToolScreenState extends State<JsonToolScreen> {
                 children: [
                   Icon(Icons.code, size: 20),
                   SizedBox(width: 8),
-                  Text("Generated Dart Code:", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  Text(
+                    "Generated Dart Code:",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
                 ],
               ),
               const SizedBox(height: 8),
               Container(
-                height: 400, // Fixed height for mobile to prevent infinite height in scroll view
+                height:
+                    400, // Fixed height for mobile to prevent infinite height in scroll view
                 decoration: BoxDecoration(
                   color: const Color(0xFF282A36), // Dracula background
                   borderRadius: BorderRadius.circular(8),
-                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4, offset: const Offset(0, 2))],
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 clipBehavior: Clip.antiAlias,
                 child: Stack(
@@ -174,14 +201,17 @@ class _JsonToolScreenState extends State<JsonToolScreen> {
                       child: SingleChildScrollView(
                         padding: const EdgeInsets.all(12),
                         child: HighlightView(
-                          _generatedCode.isEmpty ? "// Your Dart classes will appear here..." : _generatedCode,
+                          _generatedCode.isEmpty
+                              ? "// Your Dart classes will appear here..."
+                              : _generatedCode,
                           language: 'dart',
                           theme: draculaTheme,
                           textStyle: GoogleFonts.firaCode(fontSize: 13),
                         ),
                       ),
                     ),
-                    if (_generatedCode.isNotEmpty && !_generatedCode.startsWith("//"))
+                    if (_generatedCode.isNotEmpty &&
+                        !_generatedCode.startsWith("//"))
                       Positioned(
                         top: 8,
                         right: 8,

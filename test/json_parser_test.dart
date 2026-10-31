@@ -4,9 +4,11 @@ import 'package:json_to_dart_tool/json_exceptions.dart';
 
 void main() {
   group('JsonParser & Exceptions Unit Test Suite', () {
-
     test('JsonParseException stringifies message correctly', () {
-      const exception = JsonParseException('Invalid format at line 4', 'Unexpected token');
+      const exception = JsonParseException(
+        'Invalid format at line 4',
+        'Unexpected token',
+      );
       expect(exception.toString(), contains('Invalid format at line 4'));
       expect(exception.toString(), contains('Unexpected token'));
     });
@@ -21,7 +23,8 @@ void main() {
     });
 
     test('Validates nested object structure deserialization', () {
-      const nestedJson = '{"user": {"name": "Abdulrahman", "role": "Engineer"}}';
+      const nestedJson =
+          '{"user": {"name": "Abdulrahman", "role": "Engineer"}}';
       final Map<String, dynamic> data = jsonDecode(nestedJson);
 
       expect(data['user'], isA<Map>());
@@ -37,7 +40,10 @@ void main() {
     });
 
     test('Throws FormatException on malformed payload string', () {
-      expect(() => jsonDecode('{malformed_json}'), throwsA(isA<FormatException>()));
+      expect(
+        () => jsonDecode('{malformed_json}'),
+        throwsA(isA<FormatException>()),
+      );
     });
   });
 }

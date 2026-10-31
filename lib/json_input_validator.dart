@@ -7,12 +7,12 @@ class JsonValidationResult {
   final String? errorMessage;
 
   const JsonValidationResult.success(this.parsedData)
-      : isValid = true,
-        errorMessage = null;
+    : isValid = true,
+      errorMessage = null;
 
   const JsonValidationResult.failure(this.errorMessage)
-      : isValid = false,
-        parsedData = null;
+    : isValid = false,
+      parsedData = null;
 }
 
 class JsonInputValidator {
@@ -25,11 +25,15 @@ class JsonInputValidator {
     try {
       final dynamic decoded = jsonDecode(rawInput);
       if (decoded is! Map<String, dynamic> && decoded is! List) {
-        return const JsonValidationResult.failure('JSON must be an object or an array');
+        return const JsonValidationResult.failure(
+          'JSON must be an object or an array',
+        );
       }
       return JsonValidationResult.success(decoded);
     } catch (e) {
-      return JsonValidationResult.failure('Malformed JSON format: ${e.toString()}');
+      return JsonValidationResult.failure(
+        'Malformed JSON format: ${e.toString()}',
+      );
     }
   }
 }

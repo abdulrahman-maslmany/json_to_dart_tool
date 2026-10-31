@@ -2,11 +2,21 @@ class JsonParser {
   static String generateDartClass(String className, Map<String, dynamic> json) {
     StringBuffer buffer = StringBuffer();
     Set<String> generatedClasses = {};
-    _generateRecursive(_toPascalCase(className), json, buffer, generatedClasses);
+    _generateRecursive(
+      _toPascalCase(className),
+      json,
+      buffer,
+      generatedClasses,
+    );
     return buffer.toString();
   }
 
-  static void _generateRecursive(String className, Map<String, dynamic> json, StringBuffer buffer, Set<String> generatedClasses) {
+  static void _generateRecursive(
+    String className,
+    Map<String, dynamic> json,
+    StringBuffer buffer,
+    Set<String> generatedClasses,
+  ) {
     if (generatedClasses.contains(className)) return;
     generatedClasses.add(className);
 
@@ -28,21 +38,31 @@ class JsonParser {
     buffer.writeln('  });');
 
     // fromJson
-    buffer.writeln('\n  factory $className.fromJson(Map<String, dynamic> json) => $className(');
+    buffer.writeln(
+      '\n  factory $className.fromJson(Map<String, dynamic> json) => $className(',
+    );
     json.forEach((key, value) {
       String fieldName = _toCamelCase(key);
       if (value is Map<String, dynamic>) {
         String subClassName = _toPascalCase(key);
-        buffer.writeln('    $fieldName: json["$key"] == null ? null : $subClassName.fromJson(json["$key"]),');
+        buffer.writeln(
+          '    $fieldName: json["$key"] == null ? null : $subClassName.fromJson(json["$key"]),',
+        );
         subClassesToGenerate[key] = subClassName;
       } else if (value is List) {
         if (value.isNotEmpty && value[0] is Map<String, dynamic>) {
           String subClassName = _toPascalCase(key);
-          buffer.writeln('    $fieldName: json["$key"] == null ? null : List<$subClassName>.from(json["$key"].map((x) => $subClassName.fromJson(x))),');
+          buffer.writeln(
+            '    $fieldName: json["$key"] == null ? null : List<$subClassName>.from(json["$key"].map((x) => $subClassName.fromJson(x))),',
+          );
           subClassesToGenerate[key] = subClassName;
         } else {
-          String innerType = value.isEmpty ? 'dynamic' : _getDartType(key, value[0]);
-          buffer.writeln('    $fieldName: json["$key"] == null ? null : List<$innerType>.from(json["$key"].map((x) => x)),');
+          String innerType = value.isEmpty
+              ? 'dynamic'
+              : _getDartType(key, value[0]);
+          buffer.writeln(
+            '    $fieldName: json["$key"] == null ? null : List<$innerType>.from(json["$key"].map((x) => x)),',
+          );
         }
       } else {
         buffer.writeln('    $fieldName: json["$key"],');
@@ -58,7 +78,9 @@ class JsonParser {
         buffer.writeln('    "$key": $fieldName?.toJson(),');
       } else if (value is List) {
         if (value.isNotEmpty && value[0] is Map<String, dynamic>) {
-          buffer.writeln('    "$key": $fieldName?.map((i) => i.toJson()).toList(),');
+          buffer.writeln(
+            '    "$key": $fieldName?.map((i) => i.toJson()).toList(),',
+          );
         } else {
           buffer.writeln('    "$key": $fieldName,');
         }
@@ -75,7 +97,9 @@ class JsonParser {
       dynamic value = json[key];
       if (value is Map<String, dynamic>) {
         _generateRecursive(subClassName, value, buffer, generatedClasses);
-      } else if (value is List && value.isNotEmpty && value[0] is Map<String, dynamic>) {
+      } else if (value is List &&
+          value.isNotEmpty &&
+          value[0] is Map<String, dynamic>) {
         _generateRecursive(subClassName, value[0], buffer, generatedClasses);
       }
     });
