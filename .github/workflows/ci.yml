@@ -24,11 +24,14 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
+      - name: Dependency Outdated & Security Check
+        run: flutter pub outdated
+
       - name: Verify Code Formatting
-  run: dart format --output=none .
+        run: dart format --output=none .
 
       - name: Analyze Static Code Quality
         run: flutter analyze
 
-      - name: Run Automated Test Suite
+      - name: Run Automated Test Suite with Coverage
         run: flutter test --coverage
