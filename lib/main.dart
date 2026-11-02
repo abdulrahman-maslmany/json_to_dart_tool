@@ -1,10 +1,11 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:convert';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/themes/dracula.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'json_parser.dart';
+import 'json_exceptions.dart';
 
 void main() {
   runApp(const JsonToDartApp());
@@ -46,13 +47,13 @@ class _JsonToolScreenState extends State<JsonToolScreen> {
   String _generatedCode = "";
 
   void _generate() {
-    if (_jsonController.text.trim().isEmpty) {
-      _showSnackBar("Please paste some JSON first!");
-      return;
-    }
+    final rawText = _jsonController.text;
 
     try {
-      final dynamic decoded = jsonDecode(_jsonController.text);
+      // التحقق الأمني من المدخلات والحجم الأقصى
+      JsonSecurityValidator.validate(rawText);
+
+      final dynamic decoded = jsonDecode(rawText);
       String className = _classNameController.text.trim();
       if (className.isEmpty) className = "MyModel";
 
@@ -74,8 +75,15 @@ class _JsonToolScreenState extends State<JsonToolScreen> {
               "// Please provide a valid JSON object or a non-empty list of objects.";
         }
       });
+    } on EmptyInputException {
+      _showSnackBar("Please paste some JSON first!");
+    } on OversizedInputException catch (e) {
+      setState(() => _generatedCode = "// Security Warning: ${e.message}");
+      _showSnackBar("JSON payload exceeds maximum safe size!");
+    } on FormatException catch (e) {
+      setState(() => _generatedCode = "// Error: Invalid JSON format!\n// ${e.message}");
     } catch (e) {
-      setState(() => _generatedCode = "// Error: Invalid JSON format!\n// $e");
+      setState(() => _generatedCode = "// Error: Unexpected failure occurred!\n// $e");
     }
   }
 
@@ -181,16 +189,15 @@ class _JsonToolScreenState extends State<JsonToolScreen> {
               ),
               const SizedBox(height: 8),
               Container(
-                height:
-                    400, // Fixed height for mobile to prevent infinite height in scroll view
+                height: 400,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF282A36), // Dracula background
+                  color: const Color(0xFF282A36),
                   borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
                       color: Colors.black12,
                       blurRadius: 4,
-                      offset: const Offset(0, 2),
+                      offset: Offset(0, 2),
                     ),
                   ],
                 ),
