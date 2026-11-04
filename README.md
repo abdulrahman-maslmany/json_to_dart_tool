@@ -15,7 +15,7 @@ An advanced, production-ready developer tool built with **Flutter** to instantly
 - **Modern Material 3 UI:** Clean interface styled with Material Design 3 and Google Fonts typography.
 - **CamelCase Sanitization:** Automatically converts snake_case JSON keys into standard Dart camelCase properties.
 - **Clipboard Integration:** One-click copy for fast workflow integration.
-- **Automated Verification:** Cross-platform continuous integration (CI) pipeline covering static analysis and unit testing.
+- **Automated Verification:** Cross-platform continuous integration (CI) pipeline covering static analysis and unit testing..
 
 ---
 
