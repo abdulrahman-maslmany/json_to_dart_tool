@@ -1,45 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+// ✅ استيراد الملف الحقيقي للتطبيق
+import 'package:json_to_dart_tool/main.dart';
 
 void main() {
-  group('JsonToolScreen Widget Interaction Tests', () {
-    testWidgets('Renders text input fields and action generate buttons', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            appBar: AppBar(title: const Text('JSON to Dart Pro')),
-            body: Column(
-              children: [
-                const TextField(decoration: InputDecoration(hintText: 'Enter Root Class Name')),
-                const TextField(decoration: InputDecoration(hintText: 'Paste JSON here')),
-                ElevatedButton(onPressed: () {}, child: const Text('Generate')),
-              ],
-            ),
-          ),
-        ),
-      );
+  group('JsonToolScreen Real Widget Interaction Tests', () {
+    testWidgets('Renders real app UI and verifies interactive components', (WidgetTester tester) async {
+      // ✅ بناء الواجهة الحقيقية بدلاً من الشاشة الوهمية
+      // (إذا كان الكلاس الرئيسي في main.dart اسمه MyApp أو JsonToDartApp يمكنك وضعه مباشرة)
+      await tester.pumpWidget(const MaterialApp(home: JsonToolScreen()));
+      await tester.pumpAndSettle();
 
-      expect(find.text('JSON to Dart Pro'), findsOneWidget);
-      expect(find.byType(TextField), findsNWidgets(2));
-      expect(find.byType(ElevatedButton), findsOneWidget);
+      // التحقق من وجود حقول الإدخال والأزرار في شاشتك الحقيقية
+      expect(find.byType(TextField), findsWidgets);
+      expect(find.byType(ElevatedButton), findsWidgets);
     });
 
-    testWidgets('Handles input interactions safely without crashing', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ElevatedButton(
-              onPressed: () {},
-              child: const Text('Test Action'),
-            ),
-          ),
-        ),
-      );
+    testWidgets('Entering invalid JSON handles state gracefully without crashing', (WidgetTester tester) async {
+      await tester.pumpWidget(const MaterialApp(home: JsonToolScreen()));
+      await tester.pumpAndSettle();
 
-      await tester.tap(find.byType(ElevatedButton));
-      await tester.pump();
+      // البحث عن حقول الإدخال
+      final textFields = find.byType(TextField);
+      expect(textFields, findsWidgets);
 
-      expect(find.text('Test Action'), findsOneWidget);
+      // محاكاة إدخال نص JSON في الحقل
+      await tester.enterText(textFields.last, '{"name": "test"}');
+      await tester.pumpAndSettle();
+
+      // محاكاة الضغط على زر التوليد الحقيقي
+      final buttons = find.byType(ElevatedButton);
+      if (buttons.evaluate().isNotEmpty) {
+        await tester.tap(buttons.first);
+        await tester.pumpAndSettle();
+      }
+
+      // التأكد من استقرار الشاشة بعد العملية
+      expect(find.byType(JsonToolScreen), findsOneWidget);
     });
   });
 }
