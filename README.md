@@ -79,16 +79,18 @@ class UserModel {
 Text
 ├── lib/
 │   ├── main.dart             # Material 3 UI shell, responsive state, and user actions
-│   └── json_parser.dart      # Pure Dart parsing logic, type inference & AST generator
+│   ├── json_parser.dart      # Pure Dart parsing logic, type inference & AST generator
+│   └── controllers/          # Business logic and state coordination
 ├── test/
-│   └── widget_test.dart      # Automated regression and parser validation tests
+│   ├── widget_test.dart      # Automated regression and parser validation tests
+│   └── json_tool_controller_test.dart # Controller unit tests
 ├── .github/workflows/        # Automated CI pipeline (Flutter analyze, lint & unit tests)
 ├── docker-compose.yml        # Containerized isolated testing environment
 └── pubspec.yaml              # Package manifest and dependency lockfile
 🚀 Getting Started & Local Verification
 Prerequisites
-Flutter SDK (>= 3.19.0)
-Dart SDK (>= 3.3.0)
+Flutter SDK: >= 3.19.0
+Dart SDK: >= 3.3.0
 Run the App
 Bash
 git clone https://github.com/abdulrahman-maslmany/json_to_dart_tool.git
