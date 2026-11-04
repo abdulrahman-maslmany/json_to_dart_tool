@@ -50,8 +50,10 @@
   },
   "tags": ["mobile", "flutter", "unity"]
 }
-Output (Generated Dart Model):
-Dart
+```
+
+### Output (Generated Dart Model):
+```dart
 class UserModel {
   final int userId;
   final Profile profile;
@@ -75,8 +77,13 @@ class UserModel {
     'tags': tags,
   };
 }
-📁 Repository Structure
-Text
+```
+
+---
+
+## 📁 Repository Structure
+
+```text
 ├── lib/
 │   ├── main.dart             # Material 3 UI shell, responsive state, and user actions
 │   ├── json_parser.dart      # Pure Dart parsing logic, type inference & AST generator
@@ -87,25 +94,31 @@ Text
 ├── .github/workflows/        # Automated CI pipeline (Flutter analyze, lint & unit tests)
 ├── docker-compose.yml        # Containerized isolated testing environment
 └── pubspec.yaml              # Package manifest and dependency lockfile
-🚀 Getting Started & Local Verification
-Prerequisites
-Flutter SDK: >= 3.19.0
-Dart SDK: >= 3.3.0
-Run the App
-Bash
+```
+
+---
+
+## 🚀 Getting Started & Local Verification
+
+### Prerequisites
+* **Flutter SDK:** `>= 3.19.0`
+* **Dart SDK:** `>= 3.3.0`
+
+### Run the App
+```bash
 git clone https://github.com/abdulrahman-maslmany/json_to_dart_tool.git
 cd json_to_dart_tool
 flutter pub get
 flutter run
-Run Tests & Code Analysis
-Bash
+```
+
+### Run Tests & Code Analysis
+```bash
 flutter analyze
 flutter test
-📄 License
-This project is open-source and available under the MIT License.
-Code
+```
+
 ---
 
-4. بعد لصق الكود، اضغط على زر **`Commit changes...`** في أعلى اليمين ثم احفظ التعديل.
-
-ستلاحظ فوراً اختفاء اللون الأحمر بالكامل وظهور العناوين وأكواد الـ JSON والـ Dart بألوانها الجميلة والمنسقة!
+## 📄 License
+This project is open-source and available under the [MIT License](LICENSE).
