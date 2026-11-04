@@ -50,8 +50,7 @@
   },
   "tags": ["mobile", "flutter", "unity"]
 }
-Output (Generated Dart Model):
-Dart
+
 class UserModel {
   final int userId;
   final Profile profile;
@@ -75,8 +74,7 @@ class UserModel {
     'tags': tags,
   };
 }
-📁 Repository Structure
-Text
+
 ├── lib/
 │   ├── main.dart             # Material 3 UI shell, responsive state, and user actions
 │   ├── json_parser.dart      # Pure Dart parsing logic, type inference & AST generator
@@ -87,6 +85,7 @@ Text
 ├── .github/workflows/        # Automated CI pipeline (Flutter analyze, lint & unit tests)
 ├── docker-compose.yml        # Containerized isolated testing environment
 └── pubspec.yaml              # Package manifest and dependency lockfile
+
 🚀 Getting Started & Local Verification
 Prerequisites
 Flutter SDK: >= 3.19.0
