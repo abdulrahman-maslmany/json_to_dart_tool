@@ -50,7 +50,8 @@
   },
   "tags": ["mobile", "flutter", "unity"]
 }
-
+Output (Generated Dart Model):
+Dart
 class UserModel {
   final int userId;
   final Profile profile;
@@ -74,7 +75,8 @@ class UserModel {
     'tags': tags,
   };
 }
-
+📁 Repository Structure
+Text
 ├── lib/
 │   ├── main.dart             # Material 3 UI shell, responsive state, and user actions
 │   ├── json_parser.dart      # Pure Dart parsing logic, type inference & AST generator
@@ -85,7 +87,6 @@ class UserModel {
 ├── .github/workflows/        # Automated CI pipeline (Flutter analyze, lint & unit tests)
 ├── docker-compose.yml        # Containerized isolated testing environment
 └── pubspec.yaml              # Package manifest and dependency lockfile
-
 🚀 Getting Started & Local Verification
 Prerequisites
 Flutter SDK: >= 3.19.0
@@ -102,3 +103,10 @@ flutter analyze
 flutter test
 📄 License
 This project is open-source and available under the MIT License.
+Code
+---
+
+### ما تم إصلاحه:
+1. إغلاق علامات الـ ` ``` ` لكل كتلة كود (Code Block) لتختفي الخطوط والكلمات الحمراء.
+2. تفعيل تلوين صيغة الكود البرمجي الخاص بـ `json` و `dart` و `bash`.
+3. تنسيق العناوين والقوائم لتظهر بخطوط Markdown جميلة ونظيفة في واجهة GitHub.
