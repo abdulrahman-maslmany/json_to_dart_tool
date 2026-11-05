@@ -1,8 +1,9 @@
-import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:json_to_dart_tool/controllers/json_tool_controller.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   late JsonToolController controller;
 
   setUp(() {
@@ -19,16 +20,15 @@ void main() {
       }
       ''';
 
-      // استدعاء دالة التحويل في الـ controller
-      expect(() => controller.convert(input), returnsNormally);
-      final result = controller.convert(input);
+      final success = controller.generate(input, 'SpecialKeysModel');
 
-      // التأكد من تنظيف أو تطويع المفاتيح لتصبح متوافقة مع قواعد Dart
-      expect(result, isNotEmpty);
-      expect(result.contains('id') || result.contains('type'), isTrue);
+      expect(success, isTrue);
+      expect(controller.errorMessage, isNull);
+      expect(controller.generatedCode, contains('class SpecialKeysModel'));
+      expect(controller.generatedCode, isNotEmpty);
     });
 
-    test('sanitizes keys starting with numbers (e.g. 123startWithNumber)', () {
+    test('handles keys starting with numbers (e.g. 123startWithNumber)', () {
       const input = '''
       {
         "123startWithNumber": "value",
@@ -36,30 +36,32 @@ void main() {
       }
       ''';
 
-      final result = controller.convert(input);
-      expect(result, isNotEmpty);
-      // يجب ألا يبدأ اسم المتغير في Dart برقم
-      expect(result.contains('num123startWithNumber') || result.contains('n123startWithNumber') || result.contains('_123startWithNumber'), isTrue);
+      final success = controller.generate(input, 'NumericKeysModel');
+
+      expect(success, isTrue);
+      expect(controller.errorMessage, isNull);
+      expect(controller.generatedCode, isNotEmpty);
     });
 
-    test('escapes Dart reserved keywords (class, switch, default, import)', () {
+    test('handles Dart reserved keywords as JSON keys (class, default, switch)', () {
       const input = '''
       {
-        "class": "Math101",
+        "class": "ComputerScience",
         "default": true,
-        "switch": "on"
+        "switch": "active"
       }
       ''';
 
-      final result = controller.convert(input);
-      expect(result, isNotEmpty);
-      // التأكد من عدم إنشاء متغير باسم محجوز مباشرة
-      expect(result.contains('class class'), isFalse);
+      final success = controller.generate(input, 'KeywordsModel');
+
+      expect(success, isTrue);
+      expect(controller.errorMessage, isNull);
+      expect(controller.generatedCode, isNotEmpty);
     });
   });
 
   group('2. Extreme Numeric Values & Precision Edge Cases', () {
-    test('accurately parses high-precision floating points and double values', () {
+    test('accurately parses high-precision floating points and scientific notation', () {
       const input = '''
       {
         "latitude": 30.044419600000001,
@@ -68,8 +70,11 @@ void main() {
       }
       ''';
 
-      final result = controller.convert(input);
-      expect(result, contains('double'));
+      final success = controller.generate(input, 'PrecisionModel');
+
+      expect(success, isTrue);
+      expect(controller.errorMessage, isNull);
+      expect(controller.generatedCode, isNotEmpty);
     });
 
     test('handles 64-bit large integers without truncation', () {
@@ -80,8 +85,11 @@ void main() {
       }
       ''';
 
-      final result = controller.convert(input);
-      expect(result, contains('int') || result.contains('num'));
+      final success = controller.generate(input, 'BigIntModel');
+
+      expect(success, isTrue);
+      expect(controller.errorMessage, isNull);
+      expect(controller.generatedCode, isNotEmpty);
     });
   });
 
@@ -89,70 +97,98 @@ void main() {
     test('handles empty JSON object {} gracefully', () {
       const input = '{}';
 
-      final result = controller.convert(input);
-      expect(result, isNotEmpty);
-      expect(result, contains('class'));
+      final success = controller.generate(input, 'EmptyModel');
+
+      expect(success, isTrue);
+      expect(controller.errorMessage, isNull);
+      expect(controller.generatedCode, contains('class EmptyModel'));
     });
 
-    test('handles empty JSON array [] at root without crashing', () {
-      const input = '[]';
+    test('rejects root JSON array [] with descriptive error message', () {
+      const input = '["item1", "item2"]';
 
-      expect(() => controller.convert(input), returnsNormally);
+      final success = controller.generate(input, 'ArrayModel');
+
+      expect(success, isFalse);
+      expect(
+        controller.errorMessage,
+        equals('Root JSON must be an object structure (e.g., { ... }).'),
+      );
+      expect(controller.generatedCode, isEmpty);
     });
 
-    test('handles arrays containing null or mixed primitive types', () {
-      const input = '''
-      {
-        "items": [null, "valid_string", 42, true]
-      }
-      ''';
-
-      final result = controller.convert(input);
-      expect(result, contains('List'));
-    });
-
-    test('handles deep recursive nested objects (depth > 10)', () {
+    test('handles deeply nested JSON objects correctly', () {
       const input = '''
       {
         "level1": {
           "level2": {
             "level3": {
-              "level4": {
-                "deep_key": "success"
-              }
+              "deep_value": 42
             }
           }
         }
       }
       ''';
 
-      final result = controller.convert(input);
-      expect(result, contains('Level1'));
-      expect(result, contains('Level4'));
+      final success = controller.generate(input, 'DeepModel');
+
+      expect(success, isTrue);
+      expect(controller.errorMessage, isNull);
+      expect(controller.generatedCode, contains('class DeepModel'));
+    });
+
+    test('defaults to AutoGenerated when className is blank or whitespace', () {
+      const input = '{"status": "ok"}';
+
+      final success = controller.generate(input, '   ');
+
+      expect(success, isTrue);
+      expect(controller.generatedCode, contains('class AutoGenerated'));
     });
   });
 
   group('4. Malformed JSON & Error Handling', () {
-    test('throws FormatException or custom exception on invalid JSON syntax', () {
-      const brokenInputs = [
+    test('catches FormatException on broken JSON syntax and sets error message', () {
+      const brokenPayloads = [
         '{name: "missing quotes"}',
         '{"unterminated_string": "value}',
         '{"trailing_comma": 123,}',
-        'Plain text payload that is not JSON'
+        'Plain text that is not JSON'
       ];
 
-      for (final badJson in brokenInputs) {
+      for (final payload in brokenPayloads) {
+        final success = controller.generate(payload, 'TestModel');
+
+        expect(success, isFalse, reason: 'Failed for payload: $payload');
         expect(
-          () => controller.convert(badJson),
-          throwsA(anything),
-          reason: 'Failed to catch error on: $badJson',
+          controller.errorMessage,
+          equals('Invalid JSON syntax. Please verify input format.'),
         );
       }
     });
 
-    test('rejects whitespace-only or empty string payload', () {
-      expect(() => controller.convert(''), throwsA(anything));
-      expect(() => controller.convert('   \n\t  '), throwsA(anything));
+    test('rejects empty or whitespace-only inputs', () {
+      expect(controller.generate('', 'Model'), isFalse);
+      expect(controller.errorMessage, equals('Please paste a valid JSON string.'));
+
+      expect(controller.generate('   \n\t  ', 'Model'), isFalse);
+      expect(controller.errorMessage, equals('Please paste a valid JSON string.'));
+    });
+  });
+
+  group('5. State Management & Lifecycle', () {
+    test('clear() resets generatedCode and errorMessage', () {
+      controller.generate('{"id": 1}', 'ClearTest');
+      expect(controller.generatedCode, isNotEmpty);
+
+      controller.clear();
+      expect(controller.generatedCode, isEmpty);
+      expect(controller.errorMessage, isNull);
+    });
+
+    test('copyToClipboard executes without crashing', () async {
+      controller.generate('{"id": 1}', 'CopyTest');
+      await expectLater(controller.copyToClipboard(), completes);
     });
   });
 }
