@@ -1,17 +1,17 @@
 <div align="center">
 
 # 🛠️ JSON to Dart Pro
-### Instant, Type-Safe Dart Model & Serialization Generator for Flutter
+### Instant, Type-Safe Dart Model & Serialization Generator for Flutter & CLI
 
+[![Flutter Quality & Test CI](https://github.com/abdulrahman-maslmany/json_to_dart_tool/actions/workflows/ci.yml/badge.svg)](https://github.com/abdulrahman-maslmany/json_to_dart_tool/actions/workflows/ci.yml)
 [![DeepSource Active Issues](https://app.deepsource.com/gh/abdulrahman-maslmany/json_to_dart_tool.svg/?label=active+issues&show_trend=true&token=8fFFY2l0AOXcEDKido3-WdjP)](https://app.deepsource.com/gh/abdulrahman-maslmany/json_to_dart_tool/)
-[![DeepSource Coverage](https://app.deepsource.com/gh/abdulrahman-maslmany/json_to_dart_tool.svg/?label=code+coverage&show_trend=true&token=8fFFY2l0AOXcEDKido3-WdjP)](https://app.deepsource.com/gh/abdulrahman-maslmany/json_to_dart_tool/)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/d76080d5669c4568984ef53bd8dca09b)](https://app.codacy.com?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Flutter](https://img.shields.io/badge/Flutter-3.19%2B-02569B?logo=flutter)](https://flutter.dev/)
 [![Dart](https://img.shields.io/badge/Dart-3.3%2B-0175C2?logo=dart)](https://dart.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 <p align="center">
-  A developer productivity utility designed to eliminate boilerplate code by converting complex, nested JSON payloads into decoupled, null-safe Dart data models with complete serialization logic.
+  A production-ready developer productivity tool and CLI utility designed to eliminate boilerplate by converting complex, nested JSON payloads into decoupled, null-safe Dart data models with complete serialization logic.
 </p>
 
 </div>
@@ -20,40 +20,55 @@
 
 ## ⚡ Engineering & Architecture Highlights
 
-* **Deterministic Type Inference:** Smart parsing engine that dynamically detects and infers Dart primitive types (`String`, `int`, `double`, `bool`) and distinguishes between homogeneous lists and arrays of nested objects.
-* **Recursive AST-like Parser:** Decoupled class generation engine that recursively unwraps nested JSON trees into clean, standalone Dart classes without circular dependencies.
-* **Idiomatic Dart Standards:** Enforces Dart style conventions by transforming `snake_case` API keys into proper `camelCase` fields while preserving raw mapping in `fromJson` / `toJson`.
-* **Zero-Cloud & Privacy First:** 100% client-side compilation and parsing. Sensitive payloads and API structures never leave the local client environment.
-* **Continuous Quality Assurance:** Integrated with **DeepSource** and **Codacy** to maintain zero anti-patterns, clean code standards, and security compliance on every commit.
+* **Dual Interface (GUI & CLI):** Operates as a responsive Flutter desktop/web application and a fast, standalone command-line tool (`bin/json_to_dart.dart`).
+* **Deterministic Type Inference:** Smart parsing engine dynamically detects primitive types (`String`, `int`, `double`, `bool`) and distinguishes homogeneous lists from arrays of nested objects.
+* **Recursive AST-like Parser:** Decoupled class generation engine that recursively unwraps nested JSON trees into standalone Dart classes without circular dependencies.
+* **Idiomatic Dart Standards:** Enforces Dart conventions by transforming `snake_case` API keys into `camelCase` fields while preserving raw mapping in `fromJson` / `toJson`.
+* **Zero-Cloud & Privacy First:** 100% client-side compilation and parsing. Sensitive payloads and API structures never leave your machine.
+* **Continuous Quality Assurance:** Integrated with **GitHub Actions CI**, **DeepSource**, and **Codacy** to maintain zero anti-patterns, 100% linter compliance, and automated test enforcement.
 
 ---
 
 ## 🌟 Key Features
 
 * **Recursive Nested Classes:** Automatically extracts sub-objects into standalone, reusable Dart classes.
-* **Deep List Handling:** Seamlessly generates serialization for both primitive arrays (`List<int>`) and custom object collections (`List<UserModel>`).
+* **Deep List Handling:** Seamlessly generates serialization for primitive arrays (`List<int>`) and custom object collections (`List<UserModel>`).
 * **Complete Serialization:** Produces boilerplate-free `factory fromJson(Map<String, dynamic> json)` and `Map<String, dynamic> toJson()` methods.
-* **Material 3 Interface:** Styled using Google Fonts typography, responsive layout, and real-time syntax highlighting for generated code.
-* **One-Click Workflow:** Instant clipboard integration for direct pasting into your Flutter models directory.
+* **Robust Edge-Case Sanitization:** Handles reserved Dart keywords (`class`, `switch`, `default`), keys starting with numbers, and special symbols (`@id`, `_type`).
+* **High-Precision Numeric Handling:** Correctly distinguishes 64-bit integers from scientific notation and floating-point values.
+* **Material 3 Interface:** Styled using Google Fonts typography, responsive layout, and real-time syntax highlighting.
 
 ---
 
-## 💻 Code Generation Preview
+## 💻 Command-Line Interface (CLI Tool)
 
-### Input (Raw JSON):
-```json
+Generate Dart models directly in your terminal or automation pipelines:
+
+```bash
+# Print CLI options and usage
+dart run bin/json_to_dart.dart --help
+
+# Generate a Dart model from a JSON file
+dart run bin/json_to_dart.dart -i sample.json -o lib/models/user_model.dart --class UserModel
+CLI Options
+Flag	Long Flag	Description	Default
+-i	--input	Path to the source JSON payload (Required)	—
+-o	--output	Target path to write the generated Dart file	Console Output
+-c	--class	Name of the root Dart class	AutoGenerated
+-h	--help	Show usage guidelines and flags	—
+💻 Code Generation Preview
+Input (Raw JSON):
+JSON
 {
   "user_id": 101,
   "profile": {
     "full_name": "Abdulrahman Maslmany",
     "is_active": true
   },
-  "tags": ["mobile", "flutter", "unity"]
+  "tags": ["mobile", "flutter", "dart"]
 }
-```
-
-### Output (Generated Dart Model):
-```dart
+Output (Generated Dart Model):
+Dart
 class UserModel {
   final int userId;
   final Profile profile;
@@ -77,48 +92,45 @@ class UserModel {
     'tags': tags,
   };
 }
-```
-
----
-
-## 📁 Repository Structure
-
-```text
+📁 Repository Structure
+Text
+├── bin/
+│   └── json_to_dart.dart             # Standalone CLI entrypoint for terminal workflows
 ├── lib/
-│   ├── main.dart             # Material 3 UI shell, responsive state, and user actions
-│   ├── json_parser.dart      # Pure Dart parsing logic, type inference & AST generator
-│   └── controllers/          # Business logic and state coordination
+│   ├── main.dart                     # Material 3 UI shell, responsive state, and user actions
+│   ├── json_parser.dart              # Pure Dart parsing logic, type inference & AST generator
+│   └── controllers/                  # Business logic and state coordination
 ├── test/
-│   ├── widget_test.dart      # Automated regression and parser validation tests
-│   └── json_tool_controller_test.dart # Controller unit tests
-├── .github/workflows/        # Automated CI pipeline (Flutter analyze, lint & unit tests)
-├── docker-compose.yml        # Containerized isolated testing environment
-└── pubspec.yaml              # Package manifest and dependency lockfile
-```
-
----
-
-## 🚀 Getting Started & Local Verification
-
-### Prerequisites
-* **Flutter SDK:** `>= 3.19.0`
-* **Dart SDK:** `>= 3.3.0`
-
-### Run the App
-```bash
+│   ├── cli_test.dart                 # CLI argument parsing and execution integration tests
+│   ├── edge_cases_test.dart          # Stress tests for extreme numbers, symbols, and malformed inputs
+│   ├── json_parser_edge_cases_test.dart # Parser-specific AST tests
+│   ├── json_tool_controller_test.dart # Controller lifecycle and state tests
+│   └── main_widget_test.dart         # Flutter UI smoke and widget integration tests
+├── .github/workflows/ci.yml          # Automated CI pipeline (Format, Analyze, Test with LCOV)
+├── Makefile                          # Standard build and automation target scripts
+├── docker-compose.yml                # Containerized isolated testing environment
+└── pubspec.yaml                      # Package manifest and dependency lockfile
+🚀 Getting Started & Local Verification
+Prerequisites
+Flutter SDK: >= 3.19.0
+Dart SDK: >= 3.3.0
+1. Run the GUI App
+Bash
 git clone https://github.com/abdulrahman-maslmany/json_to_dart_tool.git
 cd json_to_dart_tool
 flutter pub get
 flutter run
-```
+2. Run Automated Quality Suite (41+ Tests)
+Run code formatting, static analysis, and full test suite with coverage:
+Bash
+# Using Makefile
+make all
 
-### Run Tests & Code Analysis
-```bash
-flutter analyze
-flutter test
-```
-
+# Or using Flutter/Dart CLI directly
+dart format --output=none --set-exit-if-changed .
+flutter analyze --fatal-infos --fatal-warnings
+flutter test --coverage
+📄 License
+This project is open-source and available under the MIT License.
+Code
 ---
-
-## 📄 License
-This project is open-source and available under the [MIT License](LICENSE).
