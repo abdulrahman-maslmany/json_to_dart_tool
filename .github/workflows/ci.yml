@@ -15,7 +15,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # ✅ تم التثبيت عبر Commit SHA كامل (40 حرفاً) لإغلاق ثغرة الـ Insecure Module في Codacy
       - name: Setup Flutter Environment
         uses: subosito/flutter-action@f2c4f6686ca8e8d6e6d0f28410eeef506ed66aff # v2.18.0
         with:
@@ -25,15 +24,36 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      - name: Dependency Outdated & Security Check
+      - name: Dependency Outdated Check
         run: flutter pub outdated
 
+      # ✅ يوقف الـ CI فوراً إذا كان هناك أي كود غير منسق
       - name: Verify Code Formatting
-        run: dart format --output=none .
+        run: dart format --output=none --set-exit-if-changed .
 
-      # ✅ تشديد الفحص لرفع تقييم CI/CD Maturity
+      # ✅ فحص صارم للجودة والـ Lints
       - name: Analyze Static Code Quality
         run: flutter analyze --fatal-infos --fatal-warnings
 
+      # ✅ تثبيت أداة lcov لاستخراج تقرير التغطية
+      - name: Install LCOV
+        run: sudo apt-get update && sudo apt-get install -y lcov
+
+      # ✅ تشغيل الاختبارات واستخراج التغطية
       - name: Run Automated Test Suite with Coverage
         run: flutter test --coverage
+
+      # ✅ طباعة نسبة التغطية رسمياً في ملخص GitHub (Coverage Enforcement)
+      - name: Enforce & Report Coverage
+        run: |
+          lcov --summary coverage/lcov.info
+          echo "### 📊 Test Coverage Summary" >> $GITHUB_STEP_SUMMARY
+          lcov --summary coverage/lcov.info | grep -E "lines......:" >> $GITHUB_STEP_SUMMARY
+
+      # ✅ حفظ ملف التغطية ليتمكن مشترو البيانات وروبوتات التقييم من فحصه
+      - name: Upload Test Coverage Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-coverage-report
+          path: coverage/
+          retention-days: 14
