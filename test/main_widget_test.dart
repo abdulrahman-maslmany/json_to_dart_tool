@@ -5,7 +5,8 @@ import 'package:json_to_dart_tool/main.dart';
 
 void main() {
   group('JsonToolScreen Real Widget Interaction Tests', () {
-    testWidgets('Renders real app UI and verifies interactive components', (WidgetTester tester) async {
+    testWidgets('Renders real app UI and verifies interactive components',
+        (WidgetTester tester) async {
       // Pump the actual production widget tree into the test environment
       await tester.pumpWidget(const MaterialApp(home: JsonToolScreen()));
       await tester.pumpAndSettle();
@@ -15,7 +16,9 @@ void main() {
       expect(find.byType(ElevatedButton), findsWidgets);
     });
 
-    testWidgets('Entering invalid JSON handles state gracefully without crashing', (WidgetTester tester) async {
+    testWidgets(
+        'Entering invalid JSON handles state gracefully without crashing',
+        (WidgetTester tester) async {
       // Mount the real UI screen
       await tester.pumpWidget(const MaterialApp(home: JsonToolScreen()));
       await tester.pumpAndSettle();

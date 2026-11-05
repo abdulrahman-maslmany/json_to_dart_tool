@@ -7,12 +7,12 @@ class JsonValidationResult {
   final String? errorMessage;
 
   const JsonValidationResult.success(this.parsedData)
-    : isValid = true,
-      errorMessage = null;
+      : isValid = true,
+        errorMessage = null;
 
   const JsonValidationResult.failure(this.errorMessage)
-    : isValid = false,
-      parsedData = null;
+      : isValid = false,
+        parsedData = null;
 }
 
 class JsonInputValidator {

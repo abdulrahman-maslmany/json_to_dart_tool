@@ -57,9 +57,8 @@ class JsonParser {
           );
           subClassesToGenerate[key] = subClassName;
         } else {
-          String innerType = value.isEmpty
-              ? 'dynamic'
-              : _getDartType(key, value[0]);
+          String innerType =
+              value.isEmpty ? 'dynamic' : _getDartType(key, value[0]);
           buffer.writeln(
             '    $fieldName: json["$key"] == null ? null : List<$innerType>.from(json["$key"].map((x) => x)),',
           );

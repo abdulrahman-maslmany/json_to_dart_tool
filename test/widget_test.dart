@@ -4,7 +4,8 @@ import 'package:json_to_dart_tool/main.dart';
 
 void main() {
   group('JsonToolScreen Widget Interaction Tests', () {
-    testWidgets('Renders real application UI and core action buttons', (WidgetTester tester) async {
+    testWidgets('Renders real application UI and core action buttons',
+        (WidgetTester tester) async {
       // Pump the real application entrypoint
       await tester.pumpWidget(const MaterialApp(home: JsonToolScreen()));
       await tester.pumpAndSettle();
@@ -14,7 +15,8 @@ void main() {
       expect(find.byType(ElevatedButton), findsWidgets);
     });
 
-    testWidgets('Entering JSON and triggering generate updates state safely', (WidgetTester tester) async {
+    testWidgets('Entering JSON and triggering generate updates state safely',
+        (WidgetTester tester) async {
       await tester.pumpWidget(const MaterialApp(home: JsonToolScreen()));
       await tester.pumpAndSettle();
 

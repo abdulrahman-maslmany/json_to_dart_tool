@@ -12,14 +12,14 @@ class JsonParseException implements Exception {
 
 class EmptyInputException extends JsonParseException {
   const EmptyInputException()
-    : super('JSON payload cannot be empty or whitespace only.');
+      : super('JSON payload cannot be empty or whitespace only.');
 }
 
 class OversizedInputException extends JsonParseException {
   const OversizedInputException(int size, int limit)
-    : super(
-        'Payload size ($size characters) exceeds safe limit ($limit characters).',
-      );
+      : super(
+          'Payload size ($size characters) exceeds safe limit ($limit characters).',
+        );
 }
 
 class JsonSecurityValidator {

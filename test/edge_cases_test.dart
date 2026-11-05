@@ -43,7 +43,8 @@ void main() {
       expect(controller.generatedCode, isNotEmpty);
     });
 
-    test('handles Dart reserved keywords as JSON keys (class, default, switch)', () {
+    test('handles Dart reserved keywords as JSON keys (class, default, switch)',
+        () {
       const input = '''
       {
         "class": "ComputerScience",
@@ -61,7 +62,9 @@ void main() {
   });
 
   group('2. Extreme Numeric Values & Precision Edge Cases', () {
-    test('accurately parses high-precision floating points and scientific notation', () {
+    test(
+        'accurately parses high-precision floating points and scientific notation',
+        () {
       const input = '''
       {
         "latitude": 30.044419600000001,
@@ -148,7 +151,8 @@ void main() {
   });
 
   group('4. Malformed JSON & Error Handling', () {
-    test('catches FormatException on broken JSON syntax and sets error message', () {
+    test('catches FormatException on broken JSON syntax and sets error message',
+        () {
       const brokenPayloads = [
         '{name: "missing quotes"}',
         '{"unterminated_string": "value}',
@@ -169,10 +173,12 @@ void main() {
 
     test('rejects empty or whitespace-only inputs', () {
       expect(controller.generate('', 'Model'), isFalse);
-      expect(controller.errorMessage, equals('Please paste a valid JSON string.'));
+      expect(
+          controller.errorMessage, equals('Please paste a valid JSON string.'));
 
       expect(controller.generate('   \n\t  ', 'Model'), isFalse);
-      expect(controller.errorMessage, equals('Please paste a valid JSON string.'));
+      expect(
+          controller.errorMessage, equals('Please paste a valid JSON string.'));
     });
   });
 

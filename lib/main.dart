@@ -81,9 +81,11 @@ class _JsonToolScreenState extends State<JsonToolScreen> {
       setState(() => _generatedCode = "// Security Warning: ${e.message}");
       _showSnackBar("JSON payload exceeds maximum safe size!");
     } on FormatException catch (e) {
-      setState(() => _generatedCode = "// Error: Invalid JSON format!\n// ${e.message}");
+      setState(() =>
+          _generatedCode = "// Error: Invalid JSON format!\n// ${e.message}");
     } catch (e) {
-      setState(() => _generatedCode = "// Error: Unexpected failure occurred!\n// $e");
+      setState(() =>
+          _generatedCode = "// Error: Unexpected failure occurred!\n// $e");
     }
   }
 
