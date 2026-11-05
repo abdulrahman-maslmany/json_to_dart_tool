@@ -1,15 +1,12 @@
-.PHONY: all test analyze format coverage
+.PHONY: all test analyze format
 
-all: analyze test
-
-format:
-	dart format --set-exit-if-changed .
-
-analyze:
-	flutter analyze --fatal-infos --fatal-warnings
+all: format analyze test
 
 test:
 	flutter test --coverage
 
-coverage: test
-	genhtml coverage/lcov.info -o coverage/html
+analyze:
+	flutter analyze --fatal-infos --fatal-warnings
+
+format:
+	dart format --output=none --set-exit-if-changed .
