@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:json_to_dart_tool/cli_error.dart';
 import 'package:json_to_dart_tool/json_parser.dart';
 
 int runCli(List<String> arguments, {StringSink? out, StringSink? err}) {
@@ -41,26 +42,30 @@ Options:
   }
 
   if (inputPath == null) {
-    stderrSink.writeln('Error: Missing required argument -i / --input');
+    final error = const CliError('MISSING_ARG', 'Missing required argument -i / --input');
+    stderrSink.writeln(error.toString());
     return 1;
   }
 
   final inputFile = File(inputPath);
   if (!inputFile.existsSync()) {
-    stderrSink.writeln('Error: Input file "$inputPath" does not exist.');
+    final error = CliError('FILE_NOT_FOUND', 'Input file "$inputPath" does not exist.');
+    stderrSink.writeln(error.toString());
     return 1;
   }
 
   try {
     final rawJson = inputFile.readAsStringSync().trim();
     if (rawJson.isEmpty) {
-      stderrSink.writeln('Error: Input JSON file is empty.');
+      final error = const CliError('EMPTY_INPUT', 'Input JSON file is empty.');
+      stderrSink.writeln(error.toString());
       return 1;
     }
 
     final dynamic decoded = jsonDecode(rawJson);
     if (decoded is! Map<String, dynamic>) {
-      stderrSink.writeln('Error: Root JSON must be an object (e.g., { ... }).');
+      final error = const CliError('INVALID_ROOT', 'Root JSON must be an object (e.g., { ... }).');
+      stderrSink.writeln(error.toString());
       return 1;
     }
 
@@ -76,10 +81,12 @@ Options:
     }
     return 0;
   } on FormatException catch (e) {
-    stderrSink.writeln('Error: Invalid JSON syntax -> ${e.message}');
+    final error = CliError('INVALID_JSON', 'Invalid JSON syntax -> ${e.message}');
+    stderrSink.writeln(error.toString());
     return 1;
   } catch (e) {
-    stderrSink.writeln('Error: Unexpected parsing failure -> $e');
+    final error = CliError('UNEXPECTED_ERROR', 'Unexpected parsing failure -> $e');
+    stderrSink.writeln(error.toString());
     return 1;
   }
 }
