@@ -42,7 +42,8 @@ Options:
   }
 
   if (inputPath == null) {
-    const error = CliError('MISSING_ARG', 'Missing required argument -i / --input');
+    const error =
+        CliError('MISSING_ARG', 'Missing required argument -i / --input');
     stderrSink.writeln('Error: Missing required argument -> $error');
     return 1;
   }
