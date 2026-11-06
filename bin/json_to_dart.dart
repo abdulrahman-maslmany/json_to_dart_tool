@@ -42,14 +42,16 @@ Options:
   }
 
   if (inputPath == null) {
-    final error = const CliError('MISSING_ARG', 'Missing required argument -i / --input');
+    final error =
+        const CliError('MISSING_ARG', 'Missing required argument -i / --input');
     stderrSink.writeln(error.toString());
     return 1;
   }
 
   final inputFile = File(inputPath);
   if (!inputFile.existsSync()) {
-    final error = CliError('FILE_NOT_FOUND', 'Input file "$inputPath" does not exist.');
+    final error =
+        CliError('FILE_NOT_FOUND', 'Input file "$inputPath" does not exist.');
     stderrSink.writeln(error.toString());
     return 1;
   }
@@ -64,7 +66,8 @@ Options:
 
     final dynamic decoded = jsonDecode(rawJson);
     if (decoded is! Map<String, dynamic>) {
-      final error = const CliError('INVALID_ROOT', 'Root JSON must be an object (e.g., { ... }).');
+      final error = const CliError(
+          'INVALID_ROOT', 'Root JSON must be an object (e.g., { ... }).');
       stderrSink.writeln(error.toString());
       return 1;
     }
@@ -81,11 +84,13 @@ Options:
     }
     return 0;
   } on FormatException catch (e) {
-    final error = CliError('INVALID_JSON', 'Invalid JSON syntax -> ${e.message}');
+    final error =
+        CliError('INVALID_JSON', 'Invalid JSON syntax -> ${e.message}');
     stderrSink.writeln(error.toString());
     return 1;
   } catch (e) {
-    final error = CliError('UNEXPECTED_ERROR', 'Unexpected parsing failure -> $e');
+    final error =
+        CliError('UNEXPECTED_ERROR', 'Unexpected parsing failure -> $e');
     stderrSink.writeln(error.toString());
     return 1;
   }

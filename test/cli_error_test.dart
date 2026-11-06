@@ -18,7 +18,8 @@ void main() {
       final errBuffer = StringBuffer();
       final outBuffer = StringBuffer();
 
-      final exitCode = runCli(['-o', 'out.dart'], out: outBuffer, err: errBuffer);
+      final exitCode =
+          runCli(['-o', 'out.dart'], out: outBuffer, err: errBuffer);
 
       expect(exitCode, 1);
       expect(errBuffer.toString(), contains('[MISSING_ARG]'));
@@ -28,7 +29,8 @@ void main() {
       final errBuffer = StringBuffer();
       final outBuffer = StringBuffer();
 
-      final exitCode = runCli(['-i', 'non_existing_file_9999.json'], out: outBuffer, err: errBuffer);
+      final exitCode = runCli(['-i', 'non_existing_file_9999.json'],
+          out: outBuffer, err: errBuffer);
 
       expect(exitCode, 1);
       expect(errBuffer.toString(), contains('[FILE_NOT_FOUND]'));
@@ -42,7 +44,8 @@ void main() {
       final outBuffer = StringBuffer();
 
       try {
-        final exitCode = runCli(['-i', tempFile.path], out: outBuffer, err: errBuffer);
+        final exitCode =
+            runCli(['-i', tempFile.path], out: outBuffer, err: errBuffer);
         expect(exitCode, 1);
         expect(errBuffer.toString(), contains('[INVALID_JSON]'));
       } finally {
@@ -60,7 +63,8 @@ void main() {
       final outBuffer = StringBuffer();
 
       try {
-        final exitCode = runCli(['-i', tempFile.path], out: outBuffer, err: errBuffer);
+        final exitCode =
+            runCli(['-i', tempFile.path], out: outBuffer, err: errBuffer);
         expect(exitCode, 1);
         expect(errBuffer.toString(), contains('[EMPTY_INPUT]'));
       } finally {
