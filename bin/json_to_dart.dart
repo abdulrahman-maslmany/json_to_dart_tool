@@ -42,8 +42,8 @@ Options:
   }
 
   if (inputPath == null) {
-    final error =
-        const CliError('MISSING_ARG', 'Missing required argument -i / --input');
+    const error =
+        CliError('MISSING_ARG', 'Missing required argument -i / --input');
     stderrSink.writeln(error.toString());
     return 1;
   }
@@ -59,14 +59,14 @@ Options:
   try {
     final rawJson = inputFile.readAsStringSync().trim();
     if (rawJson.isEmpty) {
-      final error = const CliError('EMPTY_INPUT', 'Input JSON file is empty.');
+      const error = CliError('EMPTY_INPUT', 'Input JSON file is empty.');
       stderrSink.writeln(error.toString());
       return 1;
     }
 
     final dynamic decoded = jsonDecode(rawJson);
     if (decoded is! Map<String, dynamic>) {
-      final error = const CliError(
+      const error = CliError(
           'INVALID_ROOT', 'Root JSON must be an object (e.g., { ... }).');
       stderrSink.writeln(error.toString());
       return 1;
