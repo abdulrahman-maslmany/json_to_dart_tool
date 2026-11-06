@@ -6,6 +6,14 @@ on:
   pull_request:
     branches: [ main ]
 
+# ✅ تقييد الصلاحيات لمبدأ الأمان الأقصى
+permissions:
+  contents: read
+
+# ✅ تحديد الحد الأدنى الإجباري للتغطية
+env:
+  COVERAGE_THRESHOLD: 70
+
 jobs:
   analyze-and-test:
     name: Flutter Lint, Format & Automated Tests
@@ -15,6 +23,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # ✅ تثبيت الـ Commit SHA لمنع أي تحذيرات أمنية
       - name: Setup Flutter Environment
         uses: subosito/flutter-action@f2c4f6686ca8e8d6e6d0f28410eeef506ed66aff # v2.18.0
         with:
@@ -43,14 +52,33 @@ jobs:
       - name: Run Automated Test Suite with Coverage
         run: flutter test --coverage
 
-      # ✅ طباعة نسبة التغطية رسمياً في ملخص GitHub (Coverage Enforcement)
-      - name: Enforce & Report Coverage
+      # ✅ بوابة إجبارية تفشل الـ CI إذا كانت التغطية أقل من الحد الأدنى (Enforced Coverage Gate)
+      - name: Enforce & Report Coverage Gate
         run: |
           lcov --summary coverage/lcov.info
-          echo "### 📊 Test Coverage Summary" >> $GITHUB_STEP_SUMMARY
-          lcov --summary coverage/lcov.info | grep -E "lines......:" >> $GITHUB_STEP_SUMMARY
+          
+          # استخراج النسبة المئوية لعدد الأسطر المغطاة
+          COVERAGE=$(lcov --summary coverage/lcov.info | awk -F'[:%]' '/lines/ {gsub(/ /, "", $2); print $2}')
+          echo "Current Code Coverage: ${COVERAGE}%"
+          echo "Required Minimum Threshold: ${COVERAGE_THRESHOLD}%"
+          
+          # تسجيل التقرير في ملخص GitHub Actions
+          echo "### 📊 Test Coverage Gate Report" >> $GITHUB_STEP_SUMMARY
+          echo "* **Current Line Coverage:** \`${COVERAGE}%\`" >> $GITHUB_STEP_SUMMARY
+          echo "* **Enforced Minimum Threshold:** \`${COVERAGE_THRESHOLD}%\`" >> $GITHUB_STEP_SUMMARY
+          
+          # فحص النسبة وإيقاف الـ CI عند الفشل
+          awk -v cov="$COVERAGE" -v min="$COVERAGE_THRESHOLD" 'BEGIN {
+            if (cov + 0 < min + 0) {
+              print "❌ Build Failed: Test coverage (" cov "%) is below the required threshold of " min "%";
+              exit 1;
+            } else {
+              print "✅ Coverage Gate Passed: " cov "% >= " min "%";
+              exit 0;
+            }
+          }'
 
-      # ✅ حفظ ملف التغطية ليتمكن مشترو البيانات وروبوتات التقييم من فحصه
+      # ✅ حفظ ملف التغطية كـ Artifact رسمي
       - name: Upload Test Coverage Artifact
         uses: actions/upload-artifact@v4
         with:
