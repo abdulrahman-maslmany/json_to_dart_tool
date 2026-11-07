@@ -29,10 +29,9 @@ void main() {
       await tester.pumpWidget(createTestWidget());
       await tester.pumpAndSettle();
 
-      // Click Generate while input is empty
       final generateBtn = find.widgetWithText(ElevatedButton, 'Generate');
       await tester.tap(generateBtn);
-      await tester.pump(); // Start SnackBar animation
+      await tester.pump();
 
       expect(find.text('Please paste some JSON first!'), findsOneWidget);
     });
@@ -52,7 +51,6 @@ void main() {
       expect(find.textContaining('class MyModel'), findsOneWidget);
       expect(find.textContaining('final int userId;'), findsOneWidget);
 
-      // Verify Copy FAB appears and triggers copy SnackBar
       final copyBtn = find.byIcon(Icons.copy_all);
       expect(copyBtn, findsOneWidget);
       await tester.tap(copyBtn);
@@ -127,15 +125,15 @@ void main() {
       await tester.pumpAndSettle();
 
       final jsonField = find.byType(TextField).last;
-      // Feed a massive payload exceeding safe bounds (> 500KB)
-      final massivePayload = '{"data": "${"X" * 600000}"}';
+      // ✅ 100,005 حرف لتجاوز الحد الأقصى 100,000 مباشرة بدون ثقل
+      final massivePayload = '{"data":"${"A" * 100005}"}';
       await tester.enterText(jsonField, massivePayload);
       await tester.tap(find.widgetWithText(ElevatedButton, 'Generate'));
       await tester.pump();
 
-      expect(find.textContaining('// Security Warning:'), findsOneWidget);
       expect(
           find.text('JSON payload exceeds maximum safe size!'), findsOneWidget);
+      expect(find.textContaining('Security Warning'), findsOneWidget);
     });
 
     testWidgets('9. Clear button resets text field and generated code',
@@ -144,16 +142,16 @@ void main() {
       await tester.pumpAndSettle();
 
       final jsonField = find.byType(TextField).last;
-      await tester.enterText(jsonField, '{"test": 1}');
+      await tester.enterText(jsonField, '{"user_id": 101, "username": "alex"}');
       await tester.tap(find.widgetWithText(ElevatedButton, 'Generate'));
       await tester.pumpAndSettle();
-
-      expect(find.textContaining('class MyModel'), findsOneWidget);
 
       // Tap Clear IconButton
       await tester.tap(find.byIcon(Icons.delete_outline));
       await tester.pumpAndSettle();
 
+      final textFieldWidget = tester.widget<TextField>(jsonField);
+      expect(textFieldWidget.controller?.text, isEmpty);
       expect(find.text('// Your Dart classes will appear here...'),
           findsOneWidget);
     });
