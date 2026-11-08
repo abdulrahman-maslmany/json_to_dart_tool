@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:json_to_dart_tool/cli_error.dart';
+import 'package:logging/logging.dart';
 import 'package:json_to_dart_tool/json_parser.dart';
+
+final Logger _logger = Logger('json_to_dart_cli');
 
 int runCli(List<String> arguments, {StringSink? out, StringSink? err}) {
   final stdoutSink = out ?? stdout;
@@ -42,33 +44,30 @@ Options:
   }
 
   if (inputPath == null) {
-    const error =
-        CliError('MISSING_ARG', 'Missing required argument -i / --input');
-    stderrSink.writeln('Error: Missing required argument -> $error');
+    _logger.warning('Missing required input argument -i');
+    stderrSink.writeln('Error: Missing required argument -i / --input');
     return 1;
   }
 
   final inputFile = File(inputPath);
   if (!inputFile.existsSync()) {
-    final error =
-        CliError('FILE_NOT_FOUND', 'Input file "$inputPath" does not exist.');
-    stderrSink.writeln(error.toString());
+    _logger.severe('Input file "$inputPath" does not exist');
+    stderrSink.writeln('Error: Input file "$inputPath" does not exist.');
     return 1;
   }
 
   try {
     final rawJson = inputFile.readAsStringSync().trim();
     if (rawJson.isEmpty) {
-      const error = CliError('EMPTY_INPUT', 'Input JSON file is empty.');
-      stderrSink.writeln(error.toString());
+      _logger.warning('Input JSON payload is empty string');
+      stderrSink.writeln('Error: Input JSON file is empty.');
       return 1;
     }
 
     final dynamic decoded = jsonDecode(rawJson);
     if (decoded is! Map<String, dynamic>) {
-      const error = CliError(
-          'INVALID_ROOT', 'Root JSON must be an object (e.g., { ... }).');
-      stderrSink.writeln(error.toString());
+      _logger.warning('Root JSON is not an object');
+      stderrSink.writeln('Error: Root JSON must be an object (e.g., { ... }).');
       return 1;
     }
 
@@ -77,6 +76,7 @@ Options:
     if (outputPath != null) {
       final outputFile = File(outputPath);
       outputFile.writeAsStringSync(generatedDart);
+      _logger.info('Successfully generated model in $outputPath');
       stdoutSink.writeln('Successfully generated Dart model in: $outputPath');
     } else {
       stdoutSink.writeln('--- Generated Dart Code ---');
@@ -84,18 +84,23 @@ Options:
     }
     return 0;
   } on FormatException catch (e) {
-    final error =
-        CliError('INVALID_JSON', 'Invalid JSON syntax -> ${e.message}');
-    stderrSink.writeln(error.toString());
+    _logger.severe('JSON syntax formatting exception', e);
+    stderrSink.writeln('Error: Invalid JSON syntax -> ${e.message}');
     return 1;
   } catch (e) {
-    final error =
-        CliError('UNEXPECTED_ERROR', 'Unexpected parsing failure -> $e');
-    stderrSink.writeln(error.toString());
+    _logger.severe('Unexpected parsing exception', e);
+    stderrSink.writeln('Error: Unexpected parsing failure -> $e');
     return 1;
   }
 }
 
 void main(List<String> arguments) {
+  Logger.root.level = Level.INFO;
+  Logger.root.onRecord.listen((record) {
+    if (record.level >= Level.SEVERE) {
+      stderr
+          .writeln('[${record.level.name}] ${record.time}: ${record.message}');
+    }
+  });
   exit(runCli(arguments));
 }
