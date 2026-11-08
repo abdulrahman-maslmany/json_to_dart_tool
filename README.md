@@ -14,13 +14,15 @@
   A production-ready developer productivity tool and CLI utility designed to eliminate boilerplate by converting complex, nested JSON payloads into decoupled, null-safe Dart data models with complete serialization logic.
 </p>
 
+> **Project Domain Classification:** Standalone Dart CLI Developer Utility & Cross-Platform Flutter Desktop/Mobile Application (Pure Client-side Tooling — Not Infrastructure / IaC).
+
 </div>
 
 ---
 
 ## ⚡ Engineering & Architecture Highlights
 
-* **Dual Interface (GUI & CLI):** Operates as a responsive Flutter desktop/web application and a fast, standalone command-line tool (`bin/json_to_dart.dart`).
+* **Dual Interface (GUI & CLI):** Operates as a responsive Flutter desktop/mobile application and a fast, standalone command-line tool (`bin/json_to_dart.dart`).
 * **Deterministic Type Inference:** Smart parsing engine dynamically detects primitive types (`String`, `int`, `double`, `bool`) and distinguishes homogeneous lists from arrays of nested objects.
 * **Recursive AST-like Parser:** Decoupled class generation engine that recursively unwraps nested JSON trees into standalone Dart classes without circular dependencies.
 * **Idiomatic Dart Standards:** Enforces Dart conventions by transforming `snake_case` API keys into `camelCase` fields while preserving raw mapping in `fromJson` / `toJson`.
@@ -108,7 +110,6 @@ Text
 │   └── main_widget_test.dart         # Flutter UI smoke and widget integration tests
 ├── .github/workflows/ci.yml          # Automated CI pipeline (Format, Analyze, Test with LCOV)
 ├── Makefile                          # Standard build and automation target scripts
-├── docker-compose.yml                # Containerized isolated testing environment
 └── pubspec.yaml                      # Package manifest and dependency lockfile
 🚀 Getting Started & Local Verification
 Prerequisites
@@ -120,7 +121,7 @@ git clone https://github.com/abdulrahman-maslmany/json_to_dart_tool.git
 cd json_to_dart_tool
 flutter pub get
 flutter run
-2. Run Automated Quality Suite (41+ Tests)
+2. Run Automated Quality Suite (All Tests Passed)
 Run code formatting, static analysis, and full test suite with coverage:
 Bash
 # Using Makefile
@@ -130,6 +131,10 @@ make all
 dart format --output=none --set-exit-if-changed .
 flutter analyze --fatal-infos --fatal-warnings
 flutter test --coverage
+3. Environment Variable Configuration
+To configure parser limits via compilation flags (e.g., maximum payload threshold):
+Bash
+dart run --dart-define=MAX_JSON_PAYLOAD_SIZE=10485760 bin/json_to_dart.dart -i input.json
 📄 License
 This project is open-source and available under the MIT License.
 Code
