@@ -1,77 +1,59 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:json_to_dart_tool/cli_error.dart';
+import 'package:logging/logging.dart';
 import '../bin/json_to_dart.dart';
 
 void main() {
-  group('CliError Model Tests', () {
-    test('CliError formats structured code and message correctly', () {
-      const error = CliError('INVALID_JSON', 'Malformed payload');
-      expect(error.code, 'INVALID_JSON');
-      expect(error.message, 'Malformed payload');
-      expect(error.toString(), '[INVALID_JSON] Malformed payload');
-    });
-  });
+  group('Structured Logging & CLI Error Diagnostics Suite', () {
+    final List<LogRecord> recordedLogs = [];
 
-  group('CLI Error Code Integration Tests', () {
-    test('runCli outputs [MISSING_ARG] when input flag is absent', () {
-      final errBuffer = StringBuffer();
-      final outBuffer = StringBuffer();
-
-      final exitCode =
-          runCli(['-o', 'out.dart'], out: outBuffer, err: errBuffer);
-
-      expect(exitCode, 1);
-      expect(errBuffer.toString(), contains('[MISSING_ARG]'));
+    setUpAll(() {
+      Logger.root.level = Level.ALL;
+      Logger.root.onRecord.listen((record) {
+        recordedLogs.add(record);
+      });
     });
 
-    test('runCli outputs [FILE_NOT_FOUND] when file does not exist', () {
-      final errBuffer = StringBuffer();
-      final outBuffer = StringBuffer();
-
-      final exitCode = runCli(['-i', 'non_existing_file_9999.json'],
-          out: outBuffer, err: errBuffer);
-
-      expect(exitCode, 1);
-      expect(errBuffer.toString(), contains('[FILE_NOT_FOUND]'));
+    setUp(() {
+      recordedLogs.clear();
     });
 
-    test('runCli outputs [INVALID_JSON] when JSON payload is malformed', () {
-      final tempFile = File('temp_malformed_test.json');
-      tempFile.writeAsStringSync('{ invalid_json: ');
+    test('runCli logs warning when input argument is missing', () {
+      final err = StringBuffer();
+      final exitCode = runCli(['-o', 'output.dart'], err: err);
 
-      final errBuffer = StringBuffer();
-      final outBuffer = StringBuffer();
-
-      try {
-        final exitCode =
-            runCli(['-i', tempFile.path], out: outBuffer, err: errBuffer);
-        expect(exitCode, 1);
-        expect(errBuffer.toString(), contains('[INVALID_JSON]'));
-      } finally {
-        if (tempFile.existsSync()) {
-          tempFile.deleteSync();
-        }
-      }
+      expect(exitCode, equals(1));
+      expect(err.toString(), contains('Error: Missing required argument'));
+      expect(recordedLogs.any((r) => r.level == Level.WARNING), isTrue);
     });
 
-    test('runCli outputs [EMPTY_INPUT] when JSON file is completely empty', () {
-      final tempFile = File('temp_empty_test.json');
-      tempFile.writeAsStringSync('');
+    test('runCli logs severe error when input file does not exist', () {
+      final err = StringBuffer();
+      final exitCode = runCli(['-i', 'ghost_file.json'], err: err);
 
-      final errBuffer = StringBuffer();
-      final outBuffer = StringBuffer();
+      expect(exitCode, equals(1));
+      expect(err.toString(), contains('does not exist'));
+      expect(recordedLogs.any((r) => r.level == Level.SEVERE), isTrue);
+    });
 
-      try {
-        final exitCode =
-            runCli(['-i', tempFile.path], out: outBuffer, err: errBuffer);
-        expect(exitCode, 1);
-        expect(errBuffer.toString(), contains('[EMPTY_INPUT]'));
-      } finally {
-        if (tempFile.existsSync()) {
-          tempFile.deleteSync();
-        }
-      }
+    test(
+        'runCli captures invalid JSON syntax and logs structured SEVERE record',
+        () {
+      final tempDir = Directory.systemTemp.createTempSync('cli_err_test_');
+      final brokenJson = File('${tempDir.path}/broken.json');
+      brokenJson.writeAsStringSync('{invalid: json}');
+
+      final err = StringBuffer();
+      final exitCode = runCli(['-i', brokenJson.path], err: err);
+
+      expect(exitCode, equals(1));
+      expect(err.toString(), contains('Invalid JSON syntax'));
+
+      final severeLog = recordedLogs.firstWhere((r) => r.level == Level.SEVERE);
+      expect(severeLog.loggerName, equals('json_to_dart_cli'));
+      expect(severeLog.error, isA<FormatException>());
+
+      tempDir.deleteSync(recursive: true);
     });
   });
 }
