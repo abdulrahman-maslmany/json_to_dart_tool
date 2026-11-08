@@ -16,18 +16,18 @@ describe('Telemetry Metrics API Endpoint Suite', () => {
     const response = await GET();
     const data = await response.json();
 
-    // التحقق من مدة التشغيل (uptime)
+    // Verify process uptime
     assert.equal(typeof data.uptime, 'number');
     assert.ok(data.uptime >= 0, 'Uptime must be a positive number');
 
-    // التحقق من استهلاك الذاكرة (heap memory)
+    // Verify system memory telemetry
     assert.ok(data.memory, 'Memory object must be defined');
     assert.equal(typeof data.memory.heapUsed, 'number');
     assert.equal(typeof data.memory.heapTotal, 'number');
     assert.ok(data.memory.heapUsed > 0, 'heapUsed should be greater than 0');
     assert.ok(data.memory.heapTotal >= data.memory.heapUsed, 'heapTotal must be >= heapUsed');
 
-    // التحقق من التاريخ بصيغة ISO
+    // Verify ISO timestamp
     assert.ok(!isNaN(Date.parse(data.timestamp)), 'Timestamp must be valid ISO string');
   });
 });
