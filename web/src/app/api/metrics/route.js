@@ -1,6 +1,4 @@
 // web/src/app/api/metrics/route.js
-import { NextResponse } from 'next/server';
-
 export async function GET() {
   const memoryUsage = process.memoryUsage();
 
@@ -16,5 +14,5 @@ export async function GET() {
     timestamp: new Date().toISOString(),
   };
 
-  return NextResponse.json(payload, { status: 200 });
+  return Response.json(payload, { status: 200 });
 }
