@@ -18,17 +18,23 @@ class ZipDownloader {
     }
 
     // 1. Domain Layer
-    addFile('$feature/domain/entities/${feature}_entity.dart', generator.generateEntity());
-    addFile('$feature/domain/repositories/${feature}_repository.dart', generator.generateRepositoryContract());
-    addFile('$feature/domain/usecases/get_${feature}_usecase.dart', generator.generateUseCase());
+    addFile('$feature/domain/entities/${feature}_entity.dart',
+        generator.generateEntity());
+    addFile('$feature/domain/repositories/${feature}_repository.dart',
+        generator.generateRepositoryContract());
+    addFile('$feature/domain/usecases/get_${feature}_usecase.dart',
+        generator.generateUseCase());
 
     // 2. Data Layer
     addFile('$feature/data/models/${feature}_model.dart', modelCode);
-    addFile('$feature/data/datasources/${feature}_remote_datasource.dart', generator.generateDataSource());
-    addFile('$feature/data/repositories/${feature}_repository_impl.dart', generator.generateRepositoryImpl());
+    addFile('$feature/data/datasources/${feature}_remote_datasource.dart',
+        generator.generateDataSource());
+    addFile('$feature/data/repositories/${feature}_repository_impl.dart',
+        generator.generateRepositoryImpl());
 
     // 3. Presentation Layer (Cubit)
-    addFile('$feature/presentation/cubit/${feature}_cubit.dart', generator.generateCubit());
+    addFile('$feature/presentation/cubit/${feature}_cubit.dart',
+        generator.generateCubit());
 
     // ضغط الملفات
     final zipData = ZipEncoder().encode(archive);

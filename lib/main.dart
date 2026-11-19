@@ -136,7 +136,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (jsonInput.isEmpty) {
       setState(() {
-        _errorMessage = 'Please paste a valid JSON string before downloading ZIP.';
+        _errorMessage =
+            'Please paste a valid JSON string before downloading ZIP.';
       });
       return;
     }
@@ -145,7 +146,8 @@ class _HomeScreenState extends State<HomeScreen> {
       final decoded = jsonDecode(jsonInput);
       if (decoded is! Map<String, dynamic>) {
         setState(() {
-          _errorMessage = 'Root JSON must be an object to build Clean Architecture layers.';
+          _errorMessage =
+              'Root JSON must be an object to build Clean Architecture layers.';
         });
         return;
       }
@@ -166,7 +168,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('⚡ Clean Architecture Feature "$featureName" downloaded as ZIP!'),
+          content: Text(
+              '⚡ Clean Architecture Feature "$featureName" downloaded as ZIP!'),
           backgroundColor: const Color(0xFF00B894),
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 3),
@@ -222,7 +225,8 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(width: 10),
             const Text(
               'JSON to Dart & Clean Arch Pro',
-              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+              style:
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
             ),
             const SizedBox(width: 8),
             Container(
@@ -261,7 +265,8 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 // Pro Banner - Linked directly to Gumroad
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [Color(0xFF6C5CE7), Color(0xFFA29BFE)],
@@ -311,7 +316,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // Mode Selector Bar
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
@@ -324,7 +330,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       const Text(
                         'Target Format:',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 14),
                       ),
                       SegmentedButton<GeneratorMode>(
                         segments: const [
@@ -441,8 +448,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 TextField(
                   controller: _jsonController,
                   maxLines: 10,
-                  style: const TextStyle(
-                      fontFamily: 'monospace', fontSize: 13),
+                  style: const TextStyle(fontFamily: 'monospace', fontSize: 13),
                   decoration: InputDecoration(
                     hintText: 'Paste your JSON here ...',
                     border: OutlineInputBorder(
@@ -480,7 +486,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      onPressed: _generatedDartCode.isNotEmpty ? _copyToClipboard : null,
+                      onPressed: _generatedDartCode.isNotEmpty
+                          ? _copyToClipboard
+                          : null,
                       icon: const Icon(Icons.copy, size: 18),
                       label: const Text('Copy Code'),
                     ),

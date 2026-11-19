@@ -13,11 +13,14 @@ class JsonParser {
   }
 
   // 2. Freezed Pro Model
-  static String generateFreezedClass(String className, Map<String, dynamic> json, {String fileName = 'model'}) {
+  static String generateFreezedClass(
+      String className, Map<String, dynamic> json,
+      {String fileName = 'model'}) {
     StringBuffer buffer = StringBuffer();
     Set<String> generatedClasses = {};
 
-    buffer.writeln("import 'package:freezed_annotation/freezed_annotation.dart';\n");
+    buffer.writeln(
+        "import 'package:freezed_annotation/freezed_annotation.dart';\n");
     buffer.writeln("part '$fileName.freezed.dart';");
     buffer.writeln("part '$fileName.g.dart';\n");
 
@@ -38,11 +41,13 @@ class JsonParser {
     String varName = 'mock${_toPascalCase(className)}';
 
     buffer.writeln('// Generated Mock Data for Testing & UI Prototyping');
-    buffer.writeln('final $varName = ${_buildMockInstance(rootClass, json, 0)};\n');
+    buffer.writeln(
+        'final $varName = ${_buildMockInstance(rootClass, json, 0)};\n');
     return buffer.toString();
   }
 
-  static String _buildMockInstance(String className, Map<String, dynamic> json, int indentLevel) {
+  static String _buildMockInstance(
+      String className, Map<String, dynamic> json, int indentLevel) {
     String indent = '  ' * indentLevel;
     String childIndent = '  ' * (indentLevel + 1);
     StringBuffer sb = StringBuffer();
@@ -70,11 +75,14 @@ class JsonParser {
       if (value[0] is Map<String, dynamic>) {
         String subClass = _toPascalCase(key);
         var items = value
-            .map((item) => '$indent  ${_buildMockInstance(subClass, item as Map<String, dynamic>, indentLevel + 1)}')
+            .map((item) =>
+                '$indent  ${_buildMockInstance(subClass, item as Map<String, dynamic>, indentLevel + 1)}')
             .join(',\n');
         return '[\n$items,\n$indent]';
       }
-      return '[' + value.map((e) => e is String ? '"$e"' : '$e').join(', ') + ']';
+      return '[' +
+          value.map((e) => e is String ? '"$e"' : '$e').join(', ') +
+          ']';
     }
     return 'null';
   }
@@ -106,22 +114,29 @@ class JsonParser {
 
       if (value is Map<String, dynamic>) {
         subClassesToGenerate[key] = _toPascalCase(key);
-      } else if (value is List && value.isNotEmpty && value[0] is Map<String, dynamic>) {
+      } else if (value is List &&
+          value.isNotEmpty &&
+          value[0] is Map<String, dynamic>) {
         subClassesToGenerate[key] = _toPascalCase(key);
       }
     });
 
     buffer.writeln('  }) = _$className;\n');
-    buffer.writeln('  factory $className.fromJson(Map<String, dynamic> json) =>');
+    buffer
+        .writeln('  factory $className.fromJson(Map<String, dynamic> json) =>');
     buffer.writeln('      _\$${className}FromJson(json);');
     buffer.writeln('}\n');
 
     subClassesToGenerate.forEach((key, subClassName) {
       dynamic value = json[key];
       if (value is Map<String, dynamic>) {
-        _generateFreezedRecursive(subClassName, value, buffer, generatedClasses);
-      } else if (value is List && value.isNotEmpty && value[0] is Map<String, dynamic>) {
-        _generateFreezedRecursive(subClassName, value[0], buffer, generatedClasses);
+        _generateFreezedRecursive(
+            subClassName, value, buffer, generatedClasses);
+      } else if (value is List &&
+          value.isNotEmpty &&
+          value[0] is Map<String, dynamic>) {
+        _generateFreezedRecursive(
+            subClassName, value[0], buffer, generatedClasses);
       }
     });
   }

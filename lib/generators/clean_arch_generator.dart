@@ -11,8 +11,10 @@ class CleanArchGenerator {
 
   // 1. Domain: Entity
   String generateEntity() {
-    final fieldsDef = fields.entries.map((e) => '  final ${e.value} ${e.key};').join('\n');
-    final constructorParams = fields.keys.map((k) => 'required this.$k,').join(' ');
+    final fieldsDef =
+        fields.entries.map((e) => '  final ${e.value} ${e.key};').join('\n');
+    final constructorParams =
+        fields.keys.map((k) => 'required this.$k,').join(' ');
     final props = fields.keys.join(', ');
 
     return '''
