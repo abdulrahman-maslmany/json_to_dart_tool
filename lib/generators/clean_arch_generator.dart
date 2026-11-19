@@ -1,6 +1,6 @@
 class CleanArchGenerator {
   final String featureName;
-  final Map<String, String> fields; // مثال: {'id': 'int', 'title': 'String'}
+  final Map<String, String> fields;
 
   CleanArchGenerator({
     required this.featureName,
@@ -112,7 +112,7 @@ class ${featureName}RepositoryImpl implements ${featureName}Repository {
 ''';
   }
 
-  // Cubit & State
+  // 6. Presentation: Cubit & State
   String generateCubit() {
     return '''
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -149,3 +149,4 @@ class ${featureName}Cubit extends Cubit<${featureName}State> {
 }
 ''';
   }
+}
