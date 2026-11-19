@@ -112,7 +112,7 @@ class ${featureName}RepositoryImpl implements ${featureName}Repository {
 ''';
   }
 
-  // 6. Presentation: Cubit & State
+  // Cubit & State
   String generateCubit() {
     return '''
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -124,8 +124,8 @@ abstract class ${featureName}State {}
 class ${featureName}Initial extends ${featureName}State {}
 class ${featureName}Loading extends ${featureName}State {}
 class ${featureName}Loaded extends ${featureName}State {
-  final ${featureName}Entity ${_featureLower};
-  ${featureName}Loaded(this.${_featureLower});
+  final ${featureName}Entity $_featureLower;
+  ${featureName}Loaded(this.$_featureLower);
 }
 class ${featureName}Error extends ${featureName}State {
   final String message;
@@ -149,4 +149,3 @@ class ${featureName}Cubit extends Cubit<${featureName}State> {
 }
 ''';
   }
-}

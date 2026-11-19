@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'dart:html' as html;
 
 import 'json_parser.dart';
@@ -27,21 +26,24 @@ class JsonToDartApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const HomeScreen(),
+      home: const JsonToolScreen(),
     );
   }
 }
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class JsonToolScreen extends StatefulWidget {
+  const JsonToolScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<JsonToolScreen> createState() => _JsonToolScreenState();
 }
+
+// لدعم التوافق مع أي مكان آخر
+typedef HomeScreen = JsonToolScreen;
 
 enum GeneratorMode { standard, freezed, mock }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _JsonToolScreenState extends State<JsonToolScreen> {
   final TextEditingController _jsonController = TextEditingController();
   final TextEditingController _classNameController =
       TextEditingController(text: 'MyModel');
@@ -49,7 +51,6 @@ class _HomeScreenState extends State<HomeScreen> {
   String? _errorMessage;
   GeneratorMode _selectedMode = GeneratorMode.standard;
 
-  // دالة استخراج أسماء الحقول وأنواعها من الـ JSON
   Map<String, String> _extractFields(Map<String, dynamic> json) {
     final fields = <String, String>{};
     json.forEach((key, value) {
@@ -123,7 +124,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // دالة توليد وتنزيل حزمة الـ Clean Architecture كملف ZIP
   void _downloadCleanArchZip() {
     setState(() {
       _errorMessage = null;
@@ -224,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const Icon(Icons.code_rounded, color: Colors.white),
             const SizedBox(width: 10),
             const Text(
-              'JSON to Dart & Clean Arch Pro',
+              'JSON to Dart Pro & Clean Arch',
               style:
                   TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
             ),
@@ -263,7 +263,6 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Pro Banner - Linked directly to Gumroad
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
@@ -274,7 +273,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.purple.withOpacity(0.15),
+                        color: Colors.purple.withValues(alpha: 0.15),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -313,8 +312,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-
-                // Mode Selector Bar
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -365,8 +362,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-
-                // Root Class Name Input & Actions (With Clean Arch Button)
                 Wrap(
                   spacing: 12,
                   runSpacing: 12,
@@ -405,7 +400,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
-                    // زر الـ Clean Architecture الجديد والمميز
                     ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF00B894),
@@ -427,8 +421,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
-
-                // Error Message if any
                 if (_errorMessage != null)
                   Container(
                     margin: const EdgeInsets.only(bottom: 16),
@@ -443,8 +435,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: TextStyle(color: Colors.red.shade900),
                     ),
                   ),
-
-                // Input Field
                 TextField(
                   controller: _jsonController,
                   maxLines: 10,
@@ -459,8 +449,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-
-                // Output Header with Copy Button
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -495,8 +483,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
                 const SizedBox(height: 10),
-
-                // Output Display Box
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),

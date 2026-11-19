@@ -38,12 +38,11 @@ class ZipDownloader {
 
     // ضغط الملفات
     final zipData = ZipEncoder().encode(archive);
-    if (zipData == null) return;
 
     // تنزيل الملف في المتصفح
     final blob = html.Blob([zipData], 'application/zip');
     final url = html.Url.createObjectUrlFromBlob(blob);
-    final anchor = html.AnchorElement(href: url)
+    html.AnchorElement(href: url)
       ..setAttribute('download', '${feature}_clean_architecture.zip')
       ..click();
     html.Url.revokeObjectUrl(url);
